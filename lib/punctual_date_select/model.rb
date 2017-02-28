@@ -1,4 +1,21 @@
 module PunctualDateSelect
+  module DateHash
+    def year
+      get_integer_of :year
+    end
+    def month
+      get_integer_of :month
+    end
+    def day
+      get_integer_of :day
+    end
+
+    private
+    def get_integer_of(key)
+      self[key].blank? ? nil : self[key].to_i # This plugin also extends select_year that if this method returns nil it goes well.
+    end
+  end
+
   module Model
     module ClassMethods
       def punctual_date_column(*args)
@@ -68,23 +85,6 @@ module PunctualDateSelect
 
     def self.included(base)
       base.extend(ClassMethods)
-    end
-
-    module DateHash
-      def year
-        get_integer_of :year
-      end
-      def month
-        get_integer_of :month
-      end
-      def day
-        get_integer_of :day
-      end
-
-      private
-      def get_integer_of(key)
-        self[key].blank? ? nil : self[key].to_i # This plugin also extends select_year that if this method returns nil it goes well.
-      end
     end
   end
 end

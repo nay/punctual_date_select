@@ -9,6 +9,30 @@ module PunctualDateSelect
     def day
       get_integer_of :day
     end
+    def to_date
+      string_condition = allow_string.kind_of?(Regexp) ? allow_string : String
+      case value
+      when Hash
+        if value[:year].blank? || value[:month].blank? || value[:day].blank?
+          nil
+        else
+          begin
+            Date.new(value[:year].to_i,value[:month].to_i, value[:day].to_i)
+          rescue
+            nil
+          end
+        end
+      else
+        case value
+        when string_condition
+          begin
+            Date.parse(value)
+          rescue
+            nil
+          end
+        end
+      end
+    end
 
     private
     def get_integer_of(key)
@@ -19,13 +43,12 @@ module PunctualDateSelect
   module Model
     module ClassMethods
       def punctual_date_column(*args)
-        options = args.extract_options!
         args.each do |column_name|
           cast_method = :"cast_#{column_name}_if_possible"
           before_validation cast_method
 
           define_method cast_method do
-            casted_date = self.class.punctual_date_value_to_date(send(column_name), options)
+            casted_date = send(column_name).to_date
             send("#{column_name}=", casted_date) if casted_date
           end
 
@@ -47,38 +70,6 @@ module PunctualDateSelect
           end
 
           private cast_method, validation_method
-        end
-      end
-
-      # options
-      # * :allow_string - If true, it's used to create a Date. You can specify regular expression here.
-      def punctual_date_value_to_date(value, options = {})
-        allow_string = options[:allow_string]
-        string_condition = allow_string.kind_of?(Regexp) ? allow_string : String
-        case value
-        when Hash
-          if value[:year].blank? || value[:month].blank? || value[:day].blank?
-            nil
-          else
-            begin
-              Date.new(value[:year].to_i,value[:month].to_i, value[:day].to_i)
-            rescue
-              nil
-            end
-          end
-        else
-          if allow_string
-            case value
-            when string_condition
-              begin
-                Date.parse(value)
-              rescue
-                nil
-              end
-            end
-          else
-            nil
-          end
         end
       end
     end

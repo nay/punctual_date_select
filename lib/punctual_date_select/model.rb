@@ -8,7 +8,7 @@ module PunctualDateSelect
           before_validation cast_method
 
           define_method cast_method do
-            casted_date = self.class.flexible_value_to_date(send(column_name), options)
+            casted_date = self.class.punctual_date_value_to_date(send(column_name), options)
             send("#{column_name}=", casted_date) if casted_date
           end
 
@@ -21,9 +21,9 @@ module PunctualDateSelect
 
           define_method "#{column_name}=" do |value|
             self[column_name] = (value.kind_of?(Hash) && !value.values.any?{|t| !t.blank?}) ? nil : value
-            if value.kind_of?(Hash) && !value.kind_of?(FlexibleDate::DateHash)
+            if value.kind_of?(Hash) && !value.kind_of?(PunctualDateSelect::DateHash)
               class << value
-                include FlexibleDate::DateHash
+                include PunctualDateSelect::DateHash
               end
             end
             self[column_name]
@@ -35,7 +35,7 @@ module PunctualDateSelect
 
       # options
       # * :allow_string - If true, it's used to create a Date. You can specify regular expression here.
-      def flexible_value_to_date(value, options = {})
+      def punctual_date_value_to_date(value, options = {})
         allow_string = options[:allow_string]
         string_condition = allow_string.kind_of?(Regexp) ? allow_string : String
         case value

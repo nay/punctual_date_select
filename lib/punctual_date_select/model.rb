@@ -35,7 +35,7 @@ module PunctualDateSelect
           before_validation cast_method
 
           define_method cast_method do
-            casted_date = send(column_name).to_date
+            casted_date = send(column_name).try(:to_date)
             send("#{column_name}=", casted_date) if casted_date
           end
 

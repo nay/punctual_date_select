@@ -10,26 +10,13 @@ module PunctualDateSelect
       get_integer_of :day
     end
     def to_date
-      string_condition = allow_string.kind_of?(Regexp) ? allow_string : String
-      case value
-      when Hash
-        if value[:year].blank? || value[:month].blank? || value[:day].blank?
-          nil
-        else
-          begin
-            Date.new(value[:year].to_i,value[:month].to_i, value[:day].to_i)
-          rescue
-            nil
-          end
-        end
+      if year.nil? || month.nil? || day.nil?
+        nil
       else
-        case value
-        when string_condition
-          begin
-            Date.parse(value)
-          rescue
-            nil
-          end
+        begin
+          Date.new(year, month, day)
+        rescue
+          nil
         end
       end
     end

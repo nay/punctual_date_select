@@ -2,7 +2,9 @@ module PunctualDateSelect::Helper
 
   module Builder
     def punctual_date_select(method, options={}, html_options={})
-      @template.select_date(object.send(method), {:prefix => "#{@object_name}[#{method}]"}.merge(options), html_options)
+      value = object.send(method)
+      value ||= Date.current unless options[:prompt].nil?
+      @template.select_date(value, {:prefix => "#{@object_name}[#{method}]"}.merge(options), html_options)
     end
   end
 

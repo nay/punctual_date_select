@@ -20,6 +20,10 @@ module PunctualDateSelect
         end
       end
     end
+    def to_s(*args)
+      date = to_date
+      date ? date.to_s(*args) : ""
+    end
 
     private
     def get_integer_of(key)

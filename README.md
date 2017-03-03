@@ -53,9 +53,11 @@ punctual_date_column :started_on # You have started_on column which represents a
 On the view side, you can use punctual_date_select instead of date_select. This helper holds invalid date values so that the user can see what is wrong.
 This plugin does not support non-builder type helper.
 
+```
   <% form_for :your_model do |f| %>
     <%= f.punctual_date_select :started_on %>
   <% end %>
+```
 
 ## Development
 

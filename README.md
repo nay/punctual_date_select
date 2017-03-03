@@ -2,7 +2,7 @@
 
 This gem provides yet another date_select-like fields which can hold invalid date data.
 
-Rails's date select would cast date data if it's possible so 2016/9/31 would changed 2016/10/1 with no warning.
+When using Rails's date_select, an invalid date like 2016/9/31 would be casted into 2016/10/1 with no warning.
 This may cause a human error in some use cases.
 
 With PunctualDateSelect, you can hold invalid date as they are specified by an user and show the invalid error message.

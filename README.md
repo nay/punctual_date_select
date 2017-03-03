@@ -1,8 +1,24 @@
 # PunctualDateSelect
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/punctual_date_select`. To experiment with that code, run `bin/console` for an interactive prompt.
+This gem provides yet another date_select-like fields which can hold invalid date data.
 
-TODO: Delete this and the text above, and describe your gem
+Rails's date select would cast date data if it's possible so 2016/9/31 would changed 2016/10/1 with no warning.
+This may cause a human error in some use cases.
+
+With PunctualDateSelect, you can hold invalid date as they are specified by an user and show the invalid error message.
+Therefore users can notice the mistakes they've made.
+
+This gem is for Rails 4 currently.
+
+## Key concept
+
+Using PunctualDateSelect, your date column value won't have Date object while it is non-existing date.
+It holds parameters like {year: '2016', month: '9', day: '31'} instead.
+This gem extends that parameters to respond year, month, day, to_date, to_s so that inner select_date field use it like Date object.
+You can use to_date or to_s in your code to get the valid date information.
+If the specified date from punctual_date_select fields is collect, it will be casted into Date object before validation.
+
+Note that you need to run validation before you save it not to send those parameters holding invalid date data to DB.
 
 ## Installation
 
@@ -22,7 +38,24 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+You need to write code in 2 places; Model and View.
+
+### Model (ActiveRecord)
+
+It your model class which has the target date column, call punctual_date_select method.
+
+```ruby
+punctual_date_column :started_on # You have started_on column which represents a date.
+```
+
+### View
+
+On the view side, you can use punctual_date_select instead of date_select. This helper holds invalid date values so that the user can see what is wrong.
+This plugin does not support non-builder type helper.
+
+  <% form_for :your_model do |f| %>
+    <%= f.punctual_date_select :started_on %>
+  <% end %>
 
 ## Development
 
@@ -32,8 +65,7 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/punctual_date_select.
-
+Bug reports and pull requests are welcome on GitHub at https://github.com/nay/punctual_date_select.
 
 ## License
 

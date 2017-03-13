@@ -6,6 +6,7 @@ module PunctualDateSelect
     def month
       get_integer_of :month
     end
+    alias_method :mon, :month
     def day
       get_integer_of :day
     end

@@ -57,7 +57,7 @@ module PunctualDateSelect
                 include PunctualDateSelect::DateHash
               end
             end
-            self[column_name] = (value.kind_of?(Hash) && !value.values.any?{|t| !t.blank?}) ? nil : value
+            self[column_name] = (value.kind_of?(Hash) && value.values.any?{|t| t.blank?}) ? nil : value
           end
 
           private cast_method, validation_method

@@ -52,13 +52,12 @@ module PunctualDateSelect
           end
 
           define_method "#{column_name}=" do |value|
-            self[column_name] = (value.kind_of?(Hash) && !value.values.any?{|t| !t.blank?}) ? nil : value
             if value.kind_of?(Hash) && !value.kind_of?(PunctualDateSelect::DateHash)
               class << value
                 include PunctualDateSelect::DateHash
               end
             end
-            self[column_name]
+            self[column_name] = (value.kind_of?(Hash) && !value.values.any?{|t| !t.blank?}) ? nil : value
           end
 
           private cast_method, validation_method

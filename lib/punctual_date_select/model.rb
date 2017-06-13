@@ -61,5 +61,23 @@ module PunctualDateSelect
       base.extend(ClassMethods)
     end
   end
+
+  module Type
+    cast_method = defined?(ActiveModel::Type) ? :value_from_multiparameter_assignment : :cast_value
+    define_method cast_method do |value|
+      if value.kind_of?(PunctualDateSelect::DateHash)
+        value.try(:to_date) || value
+      else
+        super(value)
+      end
+    end
+  end
 end
 ActiveRecord::Base.send(:include, PunctualDateSelect::Model)
+if defined?(ActiveModel::Type)
+  ActiveModel::Type::Date.send(:prepend, PunctualDateSelect::Type)
+  ActiveModel::Type::DateTime.send(:prepend, PunctualDateSelect::Type)
+else
+  ActiveRecord::Type::Date.send(:prepend, PunctualDateSelect::Type)
+  ActiveRecord::Type::DateTime.send(:prepend, PunctualDateSelect::Type)
+end

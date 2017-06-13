@@ -36,14 +36,6 @@ module PunctualDateSelect
     module ClassMethods
       def punctual_date_column(*args)
         args.each do |column_name|
-          cast_method = :"cast_#{column_name}_if_possible"
-          before_validation cast_method
-
-          define_method cast_method do
-            casted_date = send(column_name).try(:to_date)
-            send("#{column_name}=", casted_date) if casted_date
-          end
-
           validation_method = :"validate_#{column_name}_is_casted"
           validate validation_method
 
@@ -60,7 +52,7 @@ module PunctualDateSelect
             self[column_name] = (value.kind_of?(Hash) && value.values.any?{|t| t.blank?}) ? nil : value
           end
 
-          private cast_method, validation_method
+          private validation_method
         end
       end
     end

@@ -36,14 +36,6 @@ module PunctualDateSelect
     module ClassMethods
       def punctual_date_column(*args)
         args.each do |column_name|
-          cast_method = :"cast_#{column_name}_if_possible"
-          before_validation cast_method
-
-          define_method cast_method do
-            casted_date = send(column_name).try(:to_date)
-            send("#{column_name}=", casted_date) if casted_date
-          end
-
           validation_method = :"validate_#{column_name}_is_casted"
           validate validation_method
 
@@ -52,16 +44,15 @@ module PunctualDateSelect
           end
 
           define_method "#{column_name}=" do |value|
-            self[column_name] = (value.kind_of?(Hash) && !value.values.any?{|t| !t.blank?}) ? nil : value
-            if value.kind_of?(Hash) && !value.kind_of?(PunctualDateSelect::DateHash)
+            if value.kind_of?(Hash) && !value.kind_of?(PunctualDateSelect::DateHash) && (value.keys & %i[year month day]).any?
               class << value
                 include PunctualDateSelect::DateHash
               end
             end
-            self[column_name]
+            self[column_name] = (value.kind_of?(Hash) && value.values.any?{|t| t.blank?}) ? nil : value
           end
 
-          private cast_method, validation_method
+          private validation_method
         end
       end
     end
@@ -70,5 +61,23 @@ module PunctualDateSelect
       base.extend(ClassMethods)
     end
   end
+
+  module Type
+    cast_method = defined?(ActiveModel::Type) ? :value_from_multiparameter_assignment : :cast_value
+    define_method cast_method do |value|
+      if value.kind_of?(PunctualDateSelect::DateHash)
+        value.try(:to_date) || value
+      else
+        super(value)
+      end
+    end
+  end
 end
 ActiveRecord::Base.send(:include, PunctualDateSelect::Model)
+if defined?(ActiveModel::Type)
+  ActiveModel::Type::Date.send(:prepend, PunctualDateSelect::Type)
+  ActiveModel::Type::DateTime.send(:prepend, PunctualDateSelect::Type)
+else
+  ActiveRecord::Type::Date.send(:prepend, PunctualDateSelect::Type)
+  ActiveRecord::Type::DateTime.send(:prepend, PunctualDateSelect::Type)
+end

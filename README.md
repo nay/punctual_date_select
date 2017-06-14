@@ -8,8 +8,6 @@ This may cause a human error in some use cases.
 With PunctualDateSelect, you can hold invalid date as they are specified by an user and show the invalid error message.
 Therefore users can notice the mistakes they've made.
 
-This gem is for Rails 4 currently.
-
 ## Key concept
 
 Using PunctualDateSelect, your date column value won't have Date object while it is non-existing date.
@@ -19,6 +17,13 @@ You can use to_date or to_s in your code to get the valid date information.
 If the specified date from punctual_date_select fields is collect, it will be casted into Date object before validation.
 
 Note that you need to run validation before you save it not to send those parameters holding invalid date data to DB.
+
+## Supported Versions
+
+* Ruby
+  * 2.0 or higher
+* Rails
+  * 4.2, 5.0, 5.1
 
 ## Installation
 

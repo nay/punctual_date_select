@@ -44,7 +44,7 @@ module PunctualDateSelect
           end
 
           define_method "#{column_name}=" do |value|
-            if value.kind_of?(Hash) && !value.kind_of?(PunctualDateSelect::DateHash) && (value.keys & %i[year month day]).any?
+            if value.kind_of?(Hash) && !value.kind_of?(PunctualDateSelect::DateHash) && (value.keys.map(&:to_sym) & %i[year month day]).any?
               class << value
                 include PunctualDateSelect::DateHash
               end
